@@ -7,6 +7,7 @@ import uuid
 from datetime import datetime
 import random
 import time
+import logging
 
 from openai import (
     OpenAI,
@@ -16,13 +17,16 @@ from openai import (
     InternalServerError,
 )
 
+logger = logging.getLogger(__name__)
+
 MODEL = "gpt-3.5-turbo"
 BASE_URL = "https://openai.vocareum.com/v1"
 EMBEDDING_MODEL = "text-embedding-3-large"
 
 class Agent:
-    def __init__(self, openai_api_key):
+    def __init__(self, openai_api_key, persona=None):
         self.openai_api_key = openai_api_key
+        self.persona = persona
 
     def respond(
         self,
@@ -75,9 +79,13 @@ class Agent:
                 delay = base_delay * (2 ** (attempt - 1))
                 delay += random.uniform(0, delay)
 
-                print(
-                    f"Attempt {attempt}/{max_attempts} failed: "
-                    f"{type(exc).__name__}. Retrying in {delay:.2f}s..."
+                logger.warning(
+                    "LLM request retry agent=%s attempt=%d/%d error=%s delay=%.2fs",
+                    self.persona,
+                    attempt,
+                    max_attempts,
+                    type(exc).__name__,
+                    delay,
                 )
 
                 time.sleep(delay)
@@ -118,9 +126,13 @@ class Agent:
                 delay = base_delay * (2 ** (attempt - 1))
                 delay += random.uniform(0, delay)
 
-                print(
-                    f"Attempt {attempt}/{max_attempts} failed: "
-                    f"{type(exc).__name__}. Retrying in {delay:.2f}s..."
+                logger.warning(
+                    "LLM request retry agent=%s attempt=%d/%d error=%s delay=%.2fs",
+                    self.persona,
+                    attempt,
+                    max_attempts,
+                    type(exc).__name__,
+                    delay,
                 )
 
                 time.sleep(delay)
@@ -299,7 +311,7 @@ class RAGKnowledgePromptAgent(Agent):
         try:
             return super().respond(messages)
         except Exception as e:
-            print(f"Error in RAGKnowledgePromptAgent: {e}")
+            logger.error(f"Error in RAGKnowledgePromptAgent: {e}")
             return None
 
 
@@ -354,6 +366,7 @@ class EvaluationAgent(Agent):
                 print("\n\n Step 4: Generate instructions to correct the response")
                 instruction_prompt = (
                     f"Provide instructions to fix an answer based on these reasons why it is incorrect: {evaluation}"
+                    "Only identify the necessary corrections. Preserve all content that is already correct."
                 )
                 messages=[
                     {"role": "system", "content": f"You are a {self.persona}, an evaluator agent. You are given a response and a set of criteria. You need to generate instructions to fix the response to meet the criteria."},
@@ -373,6 +386,9 @@ class EvaluationAgent(Agent):
                     f"The response to that prompt was: {response_from_worker}\n"
                     f"It has been evaluated as incorrect.\n"
                     f"Make only these corrections, do not alter content validity: {instructions}"
+                    "Return the complete revised response. "
+                    "Preserve all valid existing content and do not remove, omit, or renumber "
+                    "items unless the correction explicitly requires it."
                 )
         return {
             # TODO: 7 - Return a dictionary containing the final response, evaluation, and number of iterations
