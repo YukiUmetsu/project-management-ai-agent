@@ -2,9 +2,14 @@
 
 In this repo, you will find all the files and instructions required to complete the project. You can find more information about the project inside the Udacity Classroom.
 
-## Getting Started
+## Phase 1 Output
+[Test log](./test-run-20260911-120719.log)        
+[base_agents.py](./phase_1/workflow_agents/base_agents.py)
 
-The project needs to be completed in two phases (Phase 1 and 2)
+## Phase 2 Output
+[Completed Steps](./completed_steps.log)      
+[base_agents.py](./phase_2/workflow_agents/base_agents.py)     
+[agentic_workflow.py](./phase_2/agentic_workflow.py)
 
 ## Reflection
 
