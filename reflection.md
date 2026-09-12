@@ -16,6 +16,10 @@
    - I added dependency check and ```dependency_resolver.ensure_requirements``` will create missing dependency artifacts (user stories in reality) if they were missing.
    - Related files: [workflow_dependencies.py](./phase_2/workflow_dependencies.py) and the test file [test_workflow_dependencies.py](./phase_2/test_workflow_dependencies.py)
 
+```md
+I intentionally avoided big structural changes so that the project doesn't look like a totally different project for the assignment.
+I thought it would make the project evaluation more difficult.
+```
 
 ## Strength
 
