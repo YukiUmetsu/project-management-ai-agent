@@ -1,0 +1,23 @@
+[project]
+name = "project-management-ai-agents"
+version = "0.1.0"
+description = "Project management AI agents (phase 1 & 2)"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy",
+    "openai",
+    "pandas",
+    "python-dotenv",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["phase_1/workflow_agents"]
+testpaths = ["phase_1/workflow_agents/tests"]
+python_files = ["*_test.py", "test_*.py"]
+addopts = "-v"
